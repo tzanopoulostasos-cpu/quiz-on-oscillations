@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ταλαντώσεις - Πλήρες Quiz με Απαντήσεις</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+            font-family: 'Segoe UI', 'Roboto', 'Georgia', serif;
+            padding: 2rem 1rem;
+            color: #1a2c3e;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .subhead {
+            color: #2c5282;
+            border-bottom: 2px solid #cbd5e0;
+            display: inline-block;
+            padding-bottom: 0.3rem;
+        }
+
+        .instruction {
+            background: #eef2ff;
+            border-radius: 60px;
+            padding: 0.8rem 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            border-left: 5px solid #1e4663;
+            border-right: 5px solid #1e4663;
+            font-weight: 500;
+            color: #1e4663;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .instruction span {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+        }
+
+        .search-section {
+            background: white;
+            border-radius: 60px;
+            padding: 0.5rem 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .search-box {
+            flex: 2;
+            min-width: 200px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f8fafc;
+            border-radius: 50px;
+            padding: 0.3rem 1rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            padding: 0.7rem 0;
+            font-size: 1rem;
+            background: transparent;
+            outline: none;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.7rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1.2rem;
+            border: none;
+            border-radius: 40px;
+            background: #e2e8f0;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            color: #1e4663;
+        }
+
+        .filter-btn.active {
+            background: #1e4663;
+            color: white;
+        }
+
+        .stats {
+            font-size: 0.85rem;
+            color: #4a6a85;
+            padding: 0.3rem 1rem;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 24px;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.05);
+            border: 1px solid #e2edf7;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        }
+
+        .question-header {
+            padding: 1.2rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            background: white;
+            transition: background 0.2s;
+        }
+
+        .question-header:hover {
+            background: #fafcff;
+        }
+
+        .q-num {
+            font-weight: 800;
+            background: #eef2ff;
+            border-radius: 30px;
+            padding: 0.2rem 1rem;
+            min-width: 70px;
+            text-align: center;
+            color: #1e4a76;
+            font-size: 0.85rem;
+        }
+
+        .q-text {
+            flex: 1;
+            font-weight: 500;
+            line-height: 1.45;
+            color: #0a2f44;
+        }
+
+        .options-area {
+            padding: 0.2rem 1.5rem 0.8rem 1.5rem;
+            background: #ffffff;
+        }
+
+        .option {
+            display: flex;
+            align-items: baseline;
+            gap: 0.8rem;
+            padding: 0.35rem 0;
+            font-size: 0.92rem;
+            color: #2d4a6e;
+        }
+
+        .opt-letter {
+            font-weight: 700;
+            min-width: 28px;
+            color: #2c6e9e;
+        }
+
+        .tf-statement {
+            padding: 0.3rem 0 0.6rem 0;
+        }
+
+        .answer-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            background: #fafef9;
+            border-top: 1px solid transparent;
+        }
+
+        .answer-panel.open {
+            max-height: 500px;
+            border-top: 1px solid #d4e2f0;
+            padding: 1rem 1.5rem 1.5rem 1.5rem;
+        }
+
+        .answer-badge {
+            background: #1f7b5a;
+            color: white;
+            display: inline-block;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 0.7rem;
+        }
+
+        .justification {
+            border-left: 4px solid #5cad8e;
+            padding-left: 1rem;
+            color: #1c4e3a;
+            line-height: 1.5;
+            font-size: 0.92rem;
+        }
+
+        .toggle-icon {
+            font-size: 1.4rem;
+            font-weight: 300;
+            color: #3e7b9e;
+            min-width: 28px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 40px;
+            color: #718096;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2.5rem;
+            font-size: 0.75rem;
+            color: #6c86a3;
+        }
+
+        @media (max-width: 640px) {
+            .question-header, .options-area, .answer-panel.open {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            .search-section {
+                flex-direction: column;
+                align-items: stretch;
+                border-radius: 28px;
+            }
+            .instruction {
+                font-size: 0.85rem;
+                padding: 0.6rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🌀 Ταλαντώσεις</h1>
+        <div class="subhead">Απλή Αρμονική · Φθίνουσα · Εξαναγκασμένη · Συντονισμός</div>
+    </div>
+
+    <div class="instruction">
+        <span>📌</span> ▶ <strong>Πατήστε σε οποιαδήποτε ερώτηση</strong> για να εμφανιστεί η σωστή απάντηση μαζί με την αναλυτική δικαιολόγηση. ◀
+    </div>
+
+    <div class="search-section">
+        <div class="search-box">
+            <span>🔍</span>
+            <input type="text" id="searchInput" placeholder="Αναζήτηση σε ερωτήσεις, απαντήσεις ή δικαιολογήσεις...">
+        </div>
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">Όλες</button>
+            <button class="filter-btn" data-filter="mc">Πολλαπλής Επιλογής</button>
+            <button class="filter-btn" data-filter="tf">Σωστό/Λάθος</button>
+        </div>
+        <div class="stats" id="stats">0 ερωτήσεις</div>
+    </div>
+
+    <div id="questionsContainer"></div>
+    <footer>
+        Επιμέλεια: Χ. Κατσιλέρος · Φυσικός Ε.Κ.Π.Α. · Πατήστε σε κάθε ερώτηση για την απάντηση με δικαιολόγηση.
+    </footer>
+</div>
+
+<script>
+    // ============================================================
+    // ΠΛΗΡΕΙΣ ΕΡΩΤΗΣΕΙΣ 1-25 (Πολλαπλής Επιλογής) & 26-55 (Σ/Λ)
+    // ΑΠΟ ΤΟ ΑΡΧΕΙΟ ΤΑΛΑΝΤΩΣΕΙΣ
+    // ============================================================
+
+    const allQuestions = [
+        // 1-25: Πολλαπλής Επιλογής
+        { num: 1, type: "mc", text: "Σε μια Απλή Αρμονική Ταλάντωση (Α.Α.Τ.), αν τετραπλασιάσουμε την ολική ενέργεια Ε, το πλάτος ταλάντωσης Α:", options: ["α. Διπλασιάζεται.", "β. Τετραπλασιάζεται.", "γ. Παραμένει σταθερό.", "δ. Υποδιπλασιάζεται."], answer: "α. Διπλασιάζεται.", justification: "Η ολική ενέργεια είναι Ε = ½·D·A². Άρα A = √(2E/D). Αν η ενέργεια γίνει 4Ε, το νέο πλάτος θα είναι A' = √(2·4E/D) = 2√(2E/D) = 2A." },
+        { num: 2, type: "mc", text: "Ένα σώμα εκτελεί Α.Α.Τ. και τη χρονική στιγμή t = 0 βρίσκεται στη θέση x = +Α. Η αρχική φάση φ₀ είναι:", options: ["α. 0", "β. π", "γ. π/2", "δ. 3π/2"], answer: "γ. π/2", justification: "Η εξίσωση είναι x = A·ημ(ωt + φ₀). Για t = 0 έχουμε A = A·ημφ₀ ⇒ ημφ₀ = 1, άρα φ₀ = π/2." },
+        { num: 3, type: "mc", text: "Η σταθερά επαναφοράς D σε ένα σύστημα ελατηρίου-μάζας που ταλαντώνεται οριζόντια ισούται με:", options: ["α. mω", "β. k (σταθερά ελατηρίου)", "γ. 1/k", "δ. mg"], answer: "β. k (σταθερά ελατηρίου)", justification: "Για το ελατήριο η δύναμη επαναφοράς είναι η δύναμη του ελατηρίου F = -kx, άρα η σταθερά αναλογίας D ταυτίζεται με την k." },
+        { num: 4, type: "mc", text: "Στη φθίνουσα μηχανική ταλάντωση όπου F_αντ = -bv, η περίοδος Τ:", options: ["α. Αυξάνεται καθώς μειώνεται το πλάτος.", "β. Μειώνεται καθώς μειώνεται το πλάτος.", "γ. Παραμένει σταθερή για συγκεκριμένη τιμή των b, m, D.", "δ. Είναι ανεξάρτητη από τη σταθερά απόσβεσης b."], answer: "γ. Παραμένει σταθερή για συγκεκριμένη τιμή των b, m, D.", justification: "Για μικρές αποσβέσεις, η ταλάντωση θεωρείται ισόχρονη, δηλαδή η περίοδος παραμένει σταθερή παρά τη μείωση του πλάτους." },
+        { num: 5, type: "mc", text: "Κατά το συντονισμό μιας εξαναγκασμένης ταλάντωσης, η ενέργεια μεταφέρεται από το διεγέρτη στο σύστημα:", options: ["α. Με το ελάχιστο δυνατό ρυθμό.", "β. Μόνο στην αρχή της κίνησης.", "γ. Με το βέλτιστο (μέγιστο) τρόπο.", "δ. Και το πλάτος παραμένει μηδέν."], answer: "γ. Με το βέλτιστο (μέγιστο) τρόπο.", justification: "Ορισμός του συντονισμού είναι η μεγιστοποίηση του πλάτους επειδή η συχνότητα του διεγέρτη ταυτίζεται με την ιδιοσυχνότητα (f = f₀)." },
+        { num: 6, type: "mc", text: "Σε μια Α.Α.Τ., η συχνότητα μεταβολής της δυναμικής ενέργειας είναι f_U. Αν η συχνότητα της ταλάντωσης είναι f, τότε:", options: ["α. f_U = f", "β. f_U = 2f", "γ. f_U = f/2", "δ. f_U = 4f"], answer: "β. f_U = 2f", justification: "Η δυναμική ενέργεια μηδενίζεται δύο φορές σε κάθε περίοδο της ταλάντωσης, άρα η περιοδικότητά της είναι διπλάσια." },
+        { num: 7, type: "mc", text: "Η μέγιστη επιτάχυνση a_max ενός σώματος σε Α.Α.Τ. είναι ανάλογη με:", options: ["α. Το πλάτος Α.", "β. Το τετράγωνο της περιόδου Τ.", "γ. Την ταχύτητα v.", "δ. Τη μάζα m."], answer: "α. Το πλάτος Α.", justification: "a_max = ω²A. Για δεδομένη συχνότητα, η επιτάχυνση είναι ευθέως ανάλογη του πλάτους." },
+        { num: 8, type: "mc", text: "Όταν ένας ταλαντωτής διέρχεται από τη θέση ισορροπίας:", options: ["α. Η δύναμη επαναφοράς είναι μέγιστη.", "β. Η δυναμική ενέργεια είναι μέγιστη.", "γ. Η ταχύτητα είναι μέγιστη.", "δ. Η επιτάχυνση είναι μέγιστη."], answer: "γ. Η ταχύτητα είναι μέγιστη.", justification: "Στη θέση x = 0, η δυναμική ενέργεια είναι μηδέν και όλη η ενέργεια είναι κινητική, άρα η ταχύτητα παίρνει τη μέγιστη τιμή της." },
+        { num: 9, type: "mc", text: "Σε μια φθίνουσα ταλάντωση, ο λόγος δύο διαδοχικών πλατών A_n/A_{n+1}:", options: ["α. Αυξάνεται με το χρόνο.", "β. Μειώνεται με το χρόνο.", "γ. Παραμένει σταθερός.", "δ. Είναι ίσος με μονάδα."], answer: "γ. Παραμένει σταθερός.", justification: "Η μείωση του πλάτους είναι εκθετική (A = A₀e^{-Λt}), οπότε ο λόγος μεγίστων απομακρύνσεων προς την ίδια κατεύθυνση είναι σταθερός." },
+        { num: 10, type: "mc", text: "Αν αυξήσουμε τη σταθερά απόσβεσης b σε μια εξαναγκασμένη ταλάντωση, τότε στο συντονισμό:", options: ["α. Το μέγιστο πλάτος αυξάνεται.", "β. Το μέγιστο πλάτος μειώνεται.", "γ. Η ιδιοσυχνότητα f₀ διπλασιάζεται.", "δ. Το πλάτος γίνεται άπειρο."], answer: "β. Το μέγιστο πλάτος μειώνεται.", justification: "Όσο μεγαλύτερη είναι η απόσβεση, τόσο χαμηλότερη είναι η κορυφή της καμπύλης συντονισμού." },
+        { num: 11, type: "mc", text: "Η δύναμη επαναφοράς στην Α.Α.Τ. F = -Dx έχει πάντα:", options: ["α. Την ίδια φορά με την απομάκρυνση.", "β. Φορά προς τη θέση ισορροπίας.", "γ. Σταθερό μέτρο.", "δ. Την ίδια φορά με την ταχύτητα."], answer: "β. Φορά προς τη θέση ισορροπίας.", justification: "Το αρνητικό πρόσημο δείχνει ότι η δύναμη αντιτίθεται στην απομάκρυνση, προσπαθώντας να επαναφέρει το σώμα στο x = 0." },
+        { num: 12, type: "mc", text: "Ένα σώμα κάνει Α.Α.Τ. με πλάτος Α. Στη θέση x = A/2, ο λόγος της δυναμικής ενέργειας U προς την ολική ενέργεια Ε είναι:", options: ["α. 1/2", "β. 1/4", "γ. 1/8", "δ. √2/2"], answer: "β. 1/4", justification: "U = ½·D·(A/2)² = ¼·(½·D·A²) = ¼·E. Άρα U/E = 1/4." },
+        { num: 13, type: "mc", text: "Στη φθίνουσα ταλάντωση, η μηχανική ενέργεια του συστήματος:", options: ["α. Διατηρείται σταθερή.", "β. Μετατρέπεται σε θερμότητα λόγω του έργου των δυνάμεων αντίστασης.", "γ. Αυξάνεται εκθετικά.", "δ. Είναι πάντα ίση με την κινητική ενέργεια."], answer: "β. Μετατρέπεται σε θερμότητα λόγω του έργου των δυνάμεων αντίστασης.", justification: "Η δύναμη απόσβεσης παράγει πάντα αρνητικό έργο, αφαιρώντας ενέργεια που διαχέεται στο περιβάλλον ως θερμότητα." },
+        { num: 14, type: "mc", text: "Μια εξαναγκασμένη ταλάντωση εκτελείται με συχνότητα f_ταλ. Αν f_δ είναι η συχνότητα του διεγέρτη και f₀ η ιδιοσυχνότητα, τότε:", options: ["α. f_ταλ = f₀", "β. f_ταλ = f_δ", "γ. f_ταλ = (f_δ + f₀)/2", "δ. f_ταλ = f_δ - f₀"], answer: "β. f_ταλ = f_δ", justification: "Στην εξαναγκασμένη ταλάντωση, το σύστημα υποχρεώνεται να ακολουθήσει τη συχνότητα που του επιβάλλει ο διεγέρτης." },
+        { num: 15, type: "mc", text: "Η περίοδος Τ ενός συστήματος ελατηρίου-μάζας στην Α.Α.Τ. εξαρτάται από:", options: ["α. Το πλάτος της ταλάντωσης.", "β. Την αρχική φάση.", "γ. Τη μάζα του σώματος και τη σταθερά του ελατηρίου.", "δ. Την επιτάχυνση της βαρύτητας g."], answer: "γ. Τη μάζα του σώματος και τη σταθερά του ελατηρίου.", justification: "T = 2π√(m/D). Εφόσον D = k, η περίοδος καθορίζεται μόνο από την αδράνεια (m) και τη σκληρότητα του ελατηρίου (k)." },
+        { num: 16, type: "mc", text: "Σε μια Α.Α.Τ., όταν η κινητική ενέργεια Κ είναι μέγιστη, η επιτάχυνση a είναι:", options: ["α. Μέγιστη.", "β. Μηδέν.", "γ. a = ω²A.", "δ. Ίση με g."], answer: "β. Μηδέν.", justification: "Η Κ είναι μέγιστη στη θέση ισορροπίας (x = 0). Εκεί η δύναμη επαναφοράς είναι F = -D·0 = 0, άρα και η επιτάχυνση a = F/m είναι μηδέν." },
+        { num: 17, type: "mc", text: "Το πλάτος μιας φθίνουσας ταλάντωσης μειώνεται κατά 10% σε κάθε περίοδο. Μετά από δύο περιόδους, το πλάτος θα είναι:", options: ["α. 0,80A₀", "β. 0,81A₀", "γ. 0,90A₀", "δ. 0,20A₀"], answer: "β. 0,81A₀", justification: "Μετά την 1η περίοδο A₁ = 0,9A₀. Μετά τη 2η, A₂ = 0,9A₁ = 0,9·(0,9A₀) = 0,81A₀." },
+        { num: 18, type: "mc", text: "Η μέγιστη ταχύτητα στην Α.Α.Τ. δίνεται από τη σχέση:", options: ["α. v_max = ωA", "β. v_max = ω²A", "γ. v_max = ω/A", "δ. v_max = 2πf²A"], answer: "α. v_max = ωA", justification: "Προκύπτει από τον ρυθμό μεταβολής της απομάκρυνσης x = A·ημ(ωt)." },
+        { num: 19, type: "mc", text: "Ποιο από τα παρακάτω μεγέθη δεν μεταβάλλεται αν διπλασιάσουμε το πλάτος μιας Α.Α.Τ.;", options: ["α. Η μέγιστη ταχύτητα.", "β. Η ολική ενέργεια.", "γ. Η περίοδος.", "δ. Η μέγιστη δύναμη επαναφοράς."], answer: "γ. Η περίοδος.", justification: "Η περίοδος Τ εξαρτάται μόνο από τα m, D, όχι από το πλάτος Α." },
+        { num: 20, type: "mc", text: "Στο φαινόμενο του συντονισμού, η καμπύλη συντονισμού δείχνει τη σχέση:", options: ["α. Ενέργειας - Χρόνου.", "β. Πλάτους - Συχνότητας διεγέρτη.", "γ. Ταχύτητας - Απομάκρυνσης.", "δ. Δύναμης - Μάζας."], answer: "β. Πλάτους - Συχνότητας διεγέρτη.", justification: "Η καμπύλη απεικονίζει πώς μεταβάλλεται το πλάτος της ταλάντωσης Α σε συνάρτηση με τη συχνότητα του διεγέρτη f." },
+        { num: 21, type: "mc", text: "Ένα σώμα εκτελεί Α.Α.Τ. με φ₀ = 0. Τη χρονική στιγμή t = T/4:", options: ["α. Η απομάκρυνση είναι x = 0.", "β. Η ταχύτητα είναι v = 0.", "γ. Η επιτάχυνση είναι μηδέν.", "δ. Η κινητική ενέργεια είναι μέγιστη."], answer: "β. Η ταχύτητα είναι v = 0.", justification: "Για t = T/4, η φάση είναι ωt = (2π/T)(T/4) = π/2. Τότε x = A·ημ(π/2) = A (ακραία θέση), όπου η ταχύτητα μηδενίζεται στιγμιαία." },
+        { num: 22, type: "mc", text: "Στη φθίνουσα ταλάντωση όπου το πλάτος μειώνεται εκθετικά με το χρόνο, η δύναμη απόσβεσης είναι πάντα:", options: ["α. Ομόρροπη της ταχύτητας.", "β. Αντίρροπη και ανάλογη της ταχύτητας.", "γ. Ανάλογη της απομάκρυνσης x.", "δ. Σταθερή κατά μέτρο."], answer: "β. Αντίρροπη και ανάλογη της ταχύτητας.", justification: "Η δύναμη F = -bv έχει το αρνητικό πρόσημο για να δείξει ότι ανθίσταται στην κίνηση (αντίθετη φορά από το v)." },
+        { num: 23, type: "mc", text: "Η μονάδα μέτρησης της κυκλικής συχνότητας ω στο S.I. είναι:", options: ["α. Hz", "β. rad/s", "γ. s", "δ. N/m"], answer: "β. rad/s", justification: "ω = dφ/dt = 2πf, όπου το 2π είναι σε rad και η συχνότητα σε s⁻¹." },
+        { num: 24, type: "mc", text: "Αν η μάζα ενός ταλαντωτή Α.Α.Τ. τετραπλασιαστεί με D = σταθερή, η συχνότητα f:", options: ["α. Διπλασιάζεται.", "β. Υποδιπλασιάζεται.", "γ. Παραμένει ίδια.", "δ. Τετραπλασιάζεται."], answer: "β. Υποδιπλασιάζεται.", justification: "f = (1/2π)·√(D/m). Αν m' = 4m, τότε f' = (1/2π)·√(D/4m) = ½·f." },
+        { num: 25, type: "mc", text: "Η σχέση που συνδέει την επιτάχυνση a με την απομάκρυνση x στην Α.Α.Τ. είναι:", options: ["α. a = ωx", "β. a = -ω²x", "γ. a = -Dx", "δ. a = A·ημ(ωt)"], answer: "β. a = -ω²x", justification: "Αφού x = A·ημ(ωt) και a = -ω²A·ημ(ωt) = -ω²x." },
+
+        // 26-55: Σωστό/Λάθος
+        { num: 26, type: "tf", text: "Στην Α.Α.Τ. η επιτάχυνση και η δύναμη επαναφοράς έχουν πάντα την ίδια κατεύθυνση.", answer: "Σωστό", justification: "Από το 2ο νόμο του Νεύτωνα F = ma. Η μάζα m είναι θετική, άρα δύναμη και επιτάχυνση είναι ομόρροπα διανύσματα." },
+        { num: 27, type: "tf", text: "Η ολική ενέργεια μιας φθίνουσας ταλάντωσης παραμένει σταθερή.", answer: "Λάθος", justification: "Η ενέργεια μειώνεται συνεχώς λόγω των απωλειών από τις δυνάμεις απόσβεσης." },
+        { num: 28, type: "tf", text: "Κατά το συντονισμό, η συχνότητα ταλάντωσης του συστήματος είναι πάντα ίση με την ιδιοσυχνότητά του.", answer: "Σωστό", justification: "Στο συντονισμό, η συχνότητα του διεγέρτη (που είναι και η συχνότητα ταλάντωσης) συμπίπτει με την f₀." },
+        { num: 29, type: "tf", text: "Η σταθερά επαναφοράς D στην Α.Α.Τ. εξαρτάται από το πλάτος Α.", answer: "Λάθος", justification: "Η D είναι φυσικό χαρακτηριστικό του συστήματος και δεν εξαρτάται από το πλάτος." },
+        { num: 30, type: "tf", text: "Η ταχύτητα στην Α.Α.Τ. μηδενίζεται στη θέση ισορροπίας.", answer: "Λάθος", justification: "Στη θέση ισορροπίας (x = 0) η ταχύτητα είναι μέγιστη. Μηδενίζεται στις ακραίες θέσεις (x = ±A)." },
+        { num: 31, type: "tf", text: "Στη φθίνουσα ταλάντωση με δύναμη αντίστασης F = -bv, το πλάτος μειώνεται γραμμικά με το χρόνο.", answer: "Λάθος", justification: "Το πλάτος μειώνεται εκθετικά, ακολουθώντας τη σχέση A = A₀·e^{-Λt}." },
+        { num: 32, type: "tf", text: "Μια ταλάντωση λέγεται περιοδική όταν επαναλαμβάνεται σε ίσα χρονικά διαστήματα.", answer: "Σωστό", justification: "Αυτός είναι ο ορισμός της περιοδικής κίνησης." },
+        { num: 33, type: "tf", text: "Η περίοδος της Α.Α.Τ. είναι ανάλογη της μάζας m.", answer: "Λάθος", justification: "Η περίοδος είναι ανάλογη της τετραγωνικής ρίζας της μάζας (T ∝ √m)." },
+        { num: 34, type: "tf", text: "Το έργο της δύναμης επαναφοράς σε μια πλήρη ταλάντωση είναι μηδέν.", answer: "Σωστό", justification: "Η δύναμη επαναφοράς είναι συντηρητική, οπότε σε μια κλειστή διαδρομή το συνολικό της έργο μηδενίζεται." },
+        { num: 35, type: "tf", text: "Κατά το συντονισμό, αν μειώσουμε τις τριβές, το πλάτος της ταλάντωσης θα αυξηθεί.", answer: "Σωστό", justification: "Μικρότερη απόσβεση σημαίνει μεγαλύτερη κορυφή στην καμπύλη συντονισμού." },
+        { num: 36, type: "tf", text: "Η κινητική ενέργεια Κ ενός ταλαντωτή παίρνει τη μέγιστη τιμή της δύο φορές σε κάθε περίοδο.", answer: "Σωστό", justification: "Το σώμα περνά από τη θέση ισορροπίας δύο φορές σε κάθε περίοδο." },
+        { num: 37, type: "tf", text: "Στη φθίνουσα ταλάντωση, η περίοδος εξαρτάται από το πλάτος.", answer: "Λάθος", justification: "Η περίοδος θεωρείται σταθερή για συγκεκριμένες τιμές των σταθερών του συστήματος, ανεξάρτητα από το πλάτος." },
+        { num: 38, type: "tf", text: "Η αρχική φάση φ₀ = 0 σημαίνει ότι το σώμα τη στιγμή t = 0 βρίσκεται στο x = 0 και κινείται προς τα θετικά.", answer: "Σωστό", justification: "x(0) = A·ημ(0) = 0 και v(0) = v_max·συν(0) = v_max > 0." },
+        { num: 39, type: "tf", text: "Η ενέργεια μιας Α.Α.Τ. είναι ανάλογη του πλάτους Α.", answer: "Λάθος", justification: "Είναι ανάλογη του τετραγώνου του πλάτους (E ∝ A²)." },
+        { num: 40, type: "tf", text: "Η επιτάχυνση στην Α.Α.Τ. είναι πάντα αντίθετη της απομάκρυνσης.", answer: "Σωστό", justification: "a = -ω²x. Το πρόσημο δείχνει ότι αν το x είναι θετικό, η επιτάχυνση είναι αρνητική και αντίστροφα." },
+        { num: 41, type: "tf", text: "Ένας διεγέρτης σε μια εξαναγκασμένη ταλάντωση προσφέρει ενέργεια στο σύστημα.", answer: "Σωστό", justification: "Ο διεγέρτης προσφέρει ενέργεια μέσω του έργου αρμονικά μεταβαλλόμενης δύναμης." },
+        { num: 42, type: "tf", text: "Αν ένα σύστημα εκτελεί ελεύθερη ταλάντωση χωρίς τριβές, η συχνότητά του ονομάζεται ιδιοσυχνότητα.", answer: "Σωστό", justification: "Η f₀ είναι η φυσική συχνότητα με την οποία ταλαντώνεται ένα σύστημα όταν αφεθεί ελεύθερο." },
+        { num: 43, type: "tf", text: "Στις φθίνουσες ταλαντώσεις, η δύναμη αντίστασης είναι πάντα σταθερή.", answer: "Λάθος", justification: "Η δύναμη εξαρτάται από την ταχύτητα (F = -bv), άρα μεταβάλλεται κατά τη διάρκεια της ταλάντωσης." },
+        { num: 44, type: "tf", text: "Η δυναμική ενέργεια της Α.Α.Τ. μηδενίζεται στις θέσεις x = A και x = -A.", answer: "Λάθος", justification: "Στις θέσεις αυτές η U είναι μέγιστη. Μηδενίζεται στη θέση ισορροπίας (x = 0)." },
+        { num: 45, type: "tf", text: "Η σταθερά απόσβεσης b εξαρτάται από το μέσο μέσα στο οποίο γίνεται η κίνηση.", answer: "Σωστό", justification: "Εξαρτάται από το ιξώδες του ρευστού και το σχήμα του σώματος." },
+        { num: 46, type: "tf", text: "Σε μια εξαναγκασμένη ταλάντωση, το πλάτος είναι ανεξάρτητο από τη συχνότητα του διεγέρτη.", answer: "Λάθος", justification: "Το πλάτος αλλάζει ανάλογα με το πόσο κοντά είναι η f_δ στην f₀." },
+        { num: 47, type: "tf", text: "Η ταχύτητα στην Α.Α.Τ. προηγείται της απομάκρυνσης στη φάση κατά π/2 rad.", answer: "Σωστό", justification: "x = A·ημ(ωt) → v = ωA·συν(ωt) = ωA·ημ(ωt + π/2)." },
+        { num: 48, type: "tf", text: "Αν διπλασιάσουμε τη σταθερά ελατηρίου k και τη μάζα m, η περίοδος παραμένει η ίδια.", answer: "Σωστό", justification: "T = 2π√(m/k). Αν και τα δύο διπλασιαστούν, ο λόγος 2m/2k = m/k παραμένει σταθερός." },
+        { num: 49, type: "tf", text: "Στη θέση μέγιστης απομάκρυνσης, η κινητική ενέργεια είναι μέγιστη.", answer: "Λάθος", justification: "Στο x = A, v = 0, άρα K = 0. Η K είναι μέγιστη στο x = 0." },
+        { num: 50, type: "tf", text: "Σε μια φθίνουσα ταλάντωση, ο ταλαντωτής έχει μηδενική επιτάχυνση στη θέση ισορροπίας του.", answer: "Λάθος", justification: "Στη θέση ισορροπίας, a = -bv/m ≠ 0." },
+        { num: 51, type: "tf", text: "Σε εξαναγκασμένη ταλάντωση όπου f > f₀, η ενέργεια της ταλάντωσης μειώνεται καθώς ο ταλαντωτής κινείται από τη θέση ισορροπίας προς ακραία θέση.", answer: "Σωστό", justification: "f > f₀ ⇒ ω > ω₀ ⇒ mω² > mω₀² ⇒ K_max > U_max." },
+        { num: 52, type: "tf", text: "Σε φθίνουσα ταλάντωση όπου A = A₀·e^{-Λt}, η σταθερά Λ εξαρτάται από τις ιδιότητες του περιβάλλοντος και τη μάζα του ταλαντωτή.", answer: "Σωστό", justification: "Η Λ εξαρτάται από τα b (σταθερά απόσβεσης) και από τη μάζα m." },
+        { num: 53, type: "tf", text: "Κατά το συντονισμό σε σύστημα μάζας-ελατηρίου, ισχύει ΣF = -kx.", answer: "Σωστό", justification: "Στο συντονισμό f = f₀ ⇒ ω = ω₀, οπότε ΣF = m·a = m·(-ω₀²x) = -mω₀²x = -kx." },
+        { num: 54, type: "tf", text: "Σε μια Α.Α.Τ., το μέγιστο διάστημα που μπορεί να διανύσει η μάζα σε Δt = T/4 είναι A.", answer: "Λάθος", justification: "Το μέγιστο διάστημα σε T/4 είναι A√2, όταν η κίνηση ξεκινά από τη θέση ισορροπίας." },
+        { num: 55, type: "tf", text: "Κατά την Α.Α.Τ. με φ₀ = 0 ή φ₀ = π/2, ο μέγιστος ρυθμός μεταβολής της κινητικής ενέργειας αποκτάται στις θέσεις x = ±A√2/2.", answer: "Σωστό", justification: "Από τη γραφική παράσταση K-t, η κλίση dK/dt μεγιστοποιείται στις χρονικές στιγμές t = (2k+1)T/8, που αντιστοιχούν σε x = ±A√2/2." }
+    ];
+
+    // Render με αναζήτηση και φίλτρα
+    let currentFilter = "all";
+    let searchTerm = "";
+
+    function renderQuestions() {
+        const filtered = allQuestions.filter(q => {
+            if (currentFilter === "mc" && q.type !== "mc") return false;
+            if (currentFilter === "tf" && q.type !== "tf") return false;
+            if (searchTerm.trim() !== "") {
+                const term = searchTerm.toLowerCase();
+                const qText = q.text.toLowerCase();
+                const ans = (q.answer || "").toLowerCase();
+                const just = (q.justification || "").toLowerCase();
+                if (!qText.includes(term) && !ans.includes(term) && !just.includes(term)) return false;
+            }
+            return true;
+        });
+
+        document.getElementById("stats").innerText = `${filtered.length} / ${allQuestions.length} ερωτήσεις`;
+        const container = document.getElementById("questionsContainer");
+
+        if (filtered.length === 0) {
+            container.innerHTML = `<div class="no-results">😕 Δεν βρέθηκαν ερωτήσεις με αυτά τα κριτήρια.</div>`;
+            return;
+        }
+
+        container.innerHTML = filtered.map(q => {
+            let optionsHtml = "";
+            if (q.type === "mc" && q.options) {
+                optionsHtml = `<div class="options-area">${q.options.map(opt => `<div class="option"><span class="opt-letter">${opt.charAt(0)}.</span><span>${opt.substring(2)}</span></div>`).join('')}</div>`;
+            } else if (q.type === "tf") {
+                optionsHtml = `<div class="options-area tf-statement"><span style="opacity:0.7;">📌 Πρόταση: </span>${q.text}</div>`;
+            }
+
+            return `
+                <div class="question-card" data-id="${q.num}">
+                    <div class="question-header">
+                        <div class="q-num">${q.type === "mc" ? "✱" : "◉"} ${q.num}</div>
+                        <div class="q-text">${q.text}</div>
+                        <div class="toggle-icon">➕</div>
+                    </div>
+                    ${optionsHtml}
+                    <div class="answer-panel">
+                        <div class="answer-badge">✔️ Απάντηση: ${q.answer}</div>
+                        <div class="justification"><strong>Δικαιολόγηση:</strong> ${q.justification}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Event listeners για κλικ
+        document.querySelectorAll('.question-card').forEach(card => {
+            const header = card.querySelector('.question-header');
+            const panel = card.querySelector('.answer-panel');
+            const icon = card.querySelector('.toggle-icon');
+            let isOpen = false;
+            header.addEventListener('click', (e) => {
+                e.stopPropagation();
+                isOpen = !isOpen;
+                if (isOpen) {
+                    panel.classList.add('open');
+                    icon.innerHTML = '➖';
+                } else {
+                    panel.classList.remove('open');
+                    icon.innerHTML = '➕';
+                }
+            });
+        });
+    }
+
+    // Φίλτρα και αναζήτηση
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.getAttribute('data-filter');
+            renderQuestions();
+        });
+    });
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        searchTerm = e.target.value;
+        renderQuestions();
+    });
+
+    renderQuestions();
+</script>
+</body>
+</html>
